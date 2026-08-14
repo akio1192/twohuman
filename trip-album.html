@@ -11,16 +11,25 @@
     rel="stylesheet">
   <style>
     :root {
-      --glow: #ff6b4a;   /* ビビッドコーラル */
+      --glow: #ff6b4a;
+      /* ビビッドコーラル */
       --paper: #fff8f2;
-      --rose: #ff2d78;   /* ホットピンク */
-      --muted: #6b9ab8;  /* スチールブルー（紫なし） */
+      --rose: #ff2d78;
+      /* ホットピンク */
+      --muted: #6b9ab8;
+      /* スチールブルー（紫なし） */
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    html, body {
-      width: 100%; height: 100%;
+    html,
+    body {
+      width: 100%;
+      height: 100%;
       font-family: 'Zen Kaku Gothic New', sans-serif;
       color: var(--paper);
       overflow: hidden;
@@ -29,49 +38,72 @@
 
     #stage {
       position: relative;
-      width: 100%; height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; user-select: none; overflow: hidden;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
     }
 
     /* 背景：JS が slide ごとに色を変える。1.5s でなめらかに遷移 */
     #bg {
-      position: absolute; inset: 0; z-index: 0;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
       transition: background 1.5s ease;
       /* 初期値（JS と同じ先頭色） */
       background:
-        radial-gradient(ellipse at 50% -15%, rgba(255,140,100,0.28), transparent 55%),
+        radial-gradient(ellipse at 50% -15%, rgba(255, 140, 100, 0.28), transparent 55%),
         #1e0c08;
     }
 
     /* 音に合わせて背景全体がふわっと呼吸する */
     #bg::after {
       content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 110%, rgba(245,162,93,0.08), transparent 50%);
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 110%, rgba(245, 162, 93, 0.08), transparent 50%);
       animation: bgBreath 1.9s ease-in-out infinite;
       pointer-events: none;
     }
-    @keyframes bgBreath { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+    @keyframes bgBreath {
+
+      0%,
+      100% {
+        opacity: 0.6
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
 
     /* ---- 写真スライド ---- */
-    #slides { position: absolute; inset: 0; z-index: 2; }
+    #slides {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
 
     .slide {
       position: absolute;
-      top: 50%; left: 50%;
+      top: 50%;
+      left: 50%;
       width: min(92vw, 600px);
       height: min(80vh, 740px);
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
       opacity: 0;
       transform:
-        translate(-50%, -50%)
-        translateX(var(--enter-x, 40px))
-        rotate(var(--enter-rot, 3deg))
-        scale(0.94);
-      transition: opacity 0.4s ease, transform 0.45s cubic-bezier(.22,1,.36,1);
+        translate(-50%, -50%) translateX(var(--enter-x, 40px)) translateY(var(--enter-y, 0px)) rotate(var(--enter-rot, 3deg)) scale(0.94);
+      transition: opacity 0.4s ease, transform 0.45s cubic-bezier(.22, 1, .36, 1);
       pointer-events: none;
     }
+
     .slide.active {
       opacity: 1;
       transform: translate(-50%, -50%) rotate(0deg) scale(1);
@@ -81,209 +113,441 @@
     .photo {
       flex: 1;
       border-radius: 8px 8px 3px 3px;
-      background-size: cover; background-position: center;
-      display: flex; align-items: flex-end;
-      position: relative; overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
       animation: photoGlow 0.95s ease-in-out infinite;
     }
+
     @keyframes photoGlow {
-      0%,100% { box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08); }
-      50%      { box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08), 0 0 44px rgba(255,107,74,0.52); }
+
+      0%,
+      100% {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
+
+      50% {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 44px rgba(255, 107, 74, 0.52);
+      }
     }
+
     .photo::after {
       content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0) 52%, rgba(0,0,0,0.6) 100%);
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.6) 100%);
     }
 
     .place-tag {
-      position: relative; z-index: 2;
+      position: relative;
+      z-index: 2;
       padding: 18px 20px;
       font-family: 'Shippori Mincho', serif;
-      font-size: 14px; letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.92);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.92);
     }
-    .place-tag b { font-size: 21px; font-weight: 700; display: block; margin-bottom: 3px; }
+
+    .place-tag b {
+      font-size: 21px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 3px;
+    }
 
     .caption {
       padding: 15px 4px 4px;
       font-family: 'Shippori Mincho', serif;
-      font-size: 16px; line-height: 1.7;
-      color: var(--paper); text-align: center;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--paper);
+      text-align: center;
     }
 
     /* ---- 入り乱れ用飛び込み写真 ---- */
-    #scatter { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+    #scatter {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
     .flake {
       position: absolute;
-      width: 130px; height: 160px;
+      width: 130px;
+      height: 160px;
       border-radius: 6px;
-      background-size: cover; background-position: center;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 0 3px var(--paper);
-      opacity: 0; will-change: transform, opacity;
-      animation: flakeIn 0.9s cubic-bezier(.22,1,.36,1) forwards;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 3px var(--paper);
+      opacity: 0;
+      will-change: transform, opacity;
+      animation: flakeIn 0.9s cubic-bezier(.22, 1, .36, 1) forwards;
     }
+
     @keyframes flakeIn {
-      0%   { opacity:0; transform:translate(var(--fx),var(--fy)) rotate(var(--fr)) scale(0.4); }
-      35%  { opacity:1; transform:translate(calc(var(--fx)*.4),calc(var(--fy)*.4)) rotate(calc(var(--fr)*.5)) scale(1.05); }
-      70%  { opacity:1; }
-      100% { opacity:0; transform:translate(0,0) rotate(0deg) scale(0.9); }
+      0% {
+        opacity: 0;
+        transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(0.4);
+      }
+
+      35% {
+        opacity: 1;
+        transform: translate(calc(var(--fx)*.4), calc(var(--fy)*.4)) rotate(calc(var(--fr)*.5)) scale(1.05);
+      }
+
+      70% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(0deg) scale(0.9);
+      }
     }
 
     /* ---- ツッコミ（せっかち判定） ---- */
     .cheeky {
-      position: absolute; z-index: 10; pointer-events: none;
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
       font-family: 'Klee One', cursive;
-      font-size: 22px; font-weight: 600;
+      font-size: 22px;
+      font-weight: 600;
       color: var(--glow);
-      text-shadow: 0 0 20px rgba(245,162,93,0.7), 0 2px 8px rgba(0,0,0,0.5);
+      text-shadow: 0 0 20px rgba(245, 162, 93, 0.7), 0 2px 8px rgba(0, 0, 0, 0.5);
       white-space: nowrap;
-      left: 50%; top: 38%;
+      left: 50%;
+      top: 38%;
       transform: translateX(-50%);
       animation: cheekyPop 1.5s ease-out forwards;
     }
+
     @keyframes cheekyPop {
-      0%   { opacity:0; transform:translateX(-50%) scale(0.5) rotate(-8deg); }
-      18%  { opacity:1; transform:translateX(-50%) scale(1.15) rotate(4deg); }
-      50%  { opacity:1; transform:translateX(-50%) scale(1) rotate(0deg); }
-      100% { opacity:0; transform:translateX(-50%) translateY(-50px) scale(0.85); }
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5) rotate(-8deg);
+      }
+
+      18% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.15) rotate(4deg);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) rotate(0deg);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-50px) scale(0.85);
+      }
     }
 
     /* ---- ハート爆発 ---- */
-    #hearts { position: absolute; inset: 0; z-index: 8; pointer-events: none; }
+    #hearts {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      pointer-events: none;
+    }
+
     .heart {
-      position: absolute; font-size: 28px;
+      position: absolute;
+      font-size: 28px;
       will-change: transform, opacity;
       animation: floatUp 1.1s ease-out forwards;
     }
+
     @keyframes floatUp {
-      0%   { opacity:0; transform:translate(0,0) scale(0.4) rotate(0deg); }
-      20%  { opacity:1; }
-      100% { opacity:0; transform:translate(var(--hx),-180px) scale(1.2) rotate(var(--hrot)); }
+      0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.4) rotate(0deg);
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(var(--hx), -180px) scale(1.2) rotate(var(--hrot));
+      }
     }
 
     /* ---- 進行バー ---- */
     #progress {
-      position: absolute; bottom: 0; left: 0; height: 3px;
-      width: 0%; z-index: 5;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      z-index: 5;
       background: linear-gradient(90deg, var(--rose), var(--glow));
-      box-shadow: 0 0 10px rgba(245,162,93,0.7);
+      box-shadow: 0 0 10px rgba(245, 162, 93, 0.7);
       transition: width 0.3s linear;
     }
 
     /* ---- スタート画面 ---- */
     #start {
-      position: absolute; inset: 0; z-index: 20;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 26px;
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
       text-align: center;
-      background: radial-gradient(circle at 50% 45%, rgba(255,140,100,0.18), rgba(30,12,8,0.97) 60%);
+      background: radial-gradient(circle at 50% 45%, rgba(255, 140, 100, 0.18), rgba(30, 12, 8, 0.97) 60%);
       transition: opacity 0.8s ease;
     }
-    #start.hide { opacity: 0; pointer-events: none; }
+
+    #start.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     #start .t {
       font-family: 'Klee One', cursive;
-      font-size: clamp(28px, 7vw, 44px); line-height: 1.5;
+      font-size: clamp(28px, 7vw, 44px);
+      line-height: 1.5;
     }
-    #start .s { font-size: 13px; color: var(--muted); letter-spacing: 0.06em; line-height: 2; }
+
+    #start .s {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      line-height: 2;
+    }
+
     #play-btn {
       margin-top: 6px;
       font-family: 'Zen Kaku Gothic New', sans-serif;
-      font-size: 16px; color: #0a1a18;
+      font-size: 16px;
+      color: #0a1a18;
       background: var(--glow);
-      border: none; border-radius: 99px;
-      padding: 14px 40px; cursor: pointer;
-      letter-spacing: 0.08em; font-weight: 700;
-      box-shadow: 0 10px 30px rgba(245,162,93,0.4);
+      border: none;
+      border-radius: 99px;
+      padding: 14px 40px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(245, 162, 93, 0.4);
       animation: breathe 2.4s ease-in-out infinite;
     }
-    @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.06)
+      }
+    }
 
     /* ---- フィナーレ ---- */
     #finale {
-      position: absolute; inset: 0; z-index: 15;
-      display: flex; align-items: center; justify-content: center; flex-direction: column;
-      text-align: center; gap: 4px;
-      opacity: 0; pointer-events: none;
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 4px;
+      opacity: 0;
+      pointer-events: none;
       transition: opacity 1s ease;
-      background: radial-gradient(circle at 50% 45%, rgba(245,162,93,0.30), transparent 55%),
-                  rgba(30, 18, 8, 0.75);
+      background: radial-gradient(circle at 50% 45%, rgba(245, 162, 93, 0.30), transparent 55%),
+        rgba(30, 18, 8, 0.75);
     }
-    #finale.show { opacity: 1; pointer-events: auto; }
+
+    #finale.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .thanks-jp {
       font-family: 'Klee One', cursive;
       font-size: clamp(34px, 9vw, 58px);
-      text-shadow: 0 0 40px rgba(245,162,93,0.55);
-      opacity: 0; transform: translateY(14px);
+      text-shadow: 0 0 40px rgba(245, 162, 93, 0.55);
+      opacity: 0;
+      transform: translateY(14px);
       transition: opacity 1.1s ease 0.3s, transform 1.1s ease 0.3s;
     }
-    #finale.show .thanks-jp { opacity: 1; transform: translateY(0); }
+
+    #finale.show .thanks-jp {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .thanks-sub {
       margin-top: 14px;
       font-family: 'Shippori Mincho', serif;
-      font-size: 15px; color: var(--muted);
-      letter-spacing: 0.05em; max-width: 340px; line-height: 1.9;
-      opacity: 0; transition: opacity 1.1s ease 0.9s;
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      max-width: 340px;
+      line-height: 1.9;
+      opacity: 0;
+      transition: opacity 1.1s ease 0.9s;
     }
-    #finale.show .thanks-sub { opacity: 1; }
+
+    #finale.show .thanks-sub {
+      opacity: 1;
+    }
+
     #compat {
-      margin-top: 30px; width: min(78vw, 320px);
-      opacity: 0; transition: opacity 0.8s ease 1.4s;
+      margin-top: 30px;
+      width: min(78vw, 320px);
+      opacity: 0;
+      transition: opacity 0.8s ease 1.4s;
     }
-    #finale.show #compat { opacity: 1; }
+
+    #finale.show #compat {
+      opacity: 1;
+    }
+
     #compat .lbl {
-      display: flex; justify-content: space-between;
-      font-size: 12px; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
     }
+
     #compat .track {
-      height: 12px; border-radius: 99px;
-      background: rgba(255,255,255,0.1); overflow: hidden;
+      height: 12px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
     }
+
     #compat .fill {
-      height: 100%; width: 0%;
+      height: 100%;
+      width: 0%;
       background: linear-gradient(90deg, var(--rose), var(--glow));
       border-radius: 99px;
-      transition: width 2.4s cubic-bezier(.22,1,.36,1);
+      transition: width 2.4s cubic-bezier(.22, 1, .36, 1);
     }
+
     #compat .pct {
-      margin-top: 10px; text-align: center;
-      font-family: 'Klee One', cursive; font-size: 17px; color: var(--glow);
+      margin-top: 10px;
+      text-align: center;
+      font-family: 'Klee One', cursive;
+      font-size: 17px;
+      color: var(--glow);
       min-height: 24px;
     }
+
     .replay {
       margin-top: 30px;
-      font-size: 13px; color: var(--glow);
-      border: 1px solid rgba(245,162,93,0.5);
-      padding: 9px 22px; border-radius: 99px;
-      background: transparent; letter-spacing: 0.05em; cursor: pointer;
-      opacity: 0; transition: opacity 1.1s ease 2s, background 0.2s ease;
+      font-size: 13px;
+      color: var(--glow);
+      border: 1px solid rgba(245, 162, 93, 0.5);
+      padding: 9px 22px;
+      border-radius: 99px;
+      background: transparent;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 1.1s ease 2s, background 0.2s ease;
     }
-    #finale.show .replay { opacity: 1; }
-    .replay:active { background: rgba(245,162,93,0.15); }
+
+    #finale.show .replay {
+      opacity: 1;
+    }
+
+    .replay:active {
+      background: rgba(245, 162, 93, 0.15);
+    }
 
     #hint {
-      position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
-      font-size: 12px; letter-spacing: 0.08em; color: var(--muted);
-      opacity: 0.75; z-index: 6; transition: opacity 0.5s ease; pointer-events: none;
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      opacity: 0.75;
+      z-index: 6;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
       white-space: nowrap;
     }
 
     #music-btn {
-      position: absolute; top: 18px; right: 18px;
-      width: 40px; height: 40px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.04);
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.04);
       color: var(--paper);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 16;
     }
-    #music-btn.playing { border-color: rgba(245,162,93,0.7); color: var(--glow); }
-    #music-btn .bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
-    #music-btn .bar { width: 3px; height: 6px; border-radius: 1px; background: currentColor; }
-    #music-btn.playing .bar { animation: eq 0.8s ease-in-out infinite; }
-    #music-btn .bar:nth-child(2) { animation-delay: 0.12s; height: 11px; }
-    #music-btn .bar:nth-child(3) { animation-delay: 0.24s; height: 4px; }
-    @keyframes eq { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.9)} }
+
+    #music-btn.playing {
+      border-color: rgba(245, 162, 93, 0.7);
+      color: var(--glow);
+    }
+
+    #music-btn .bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 14px;
+    }
+
+    #music-btn .bar {
+      width: 3px;
+      height: 6px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    #music-btn.playing .bar {
+      animation: eq 0.8s ease-in-out infinite;
+    }
+
+    #music-btn .bar:nth-child(2) {
+      animation-delay: 0.12s;
+      height: 11px;
+    }
+
+    #music-btn .bar:nth-child(3) {
+      animation-delay: 0.24s;
+      height: 4px;
+    }
+
+    @keyframes eq {
+
+      0%,
+      100% {
+        transform: scaleY(1)
+      }
+
+      50% {
+        transform: scaleY(1.9)
+      }
+    }
 
     /* ---- モバイル最適化 ---- */
     @media (max-width: 480px) {
@@ -291,22 +555,62 @@
         width: 96vw;
         height: min(78vh, 680px);
       }
-      .place-tag b { font-size: 17px; }
-      .place-tag    { font-size: 12px; padding: 14px 16px; }
-      .caption      { font-size: 14px; padding: 12px 2px 2px; }
-      .flake        { width: 90px; height: 110px; }
-      .cheeky       { font-size: 18px; }
-      #music-btn    { width: 44px; height: 44px; }
-      #play-btn     { font-size: 15px; padding: 13px 34px; }
-      #start .t     { font-size: clamp(24px, 7vw, 36px); }
-      #start .s     { font-size: 12px; }
-      .thanks-jp    { font-size: clamp(28px, 9vw, 48px); }
-      #compat       { width: 86vw; }
+
+      .place-tag b {
+        font-size: 17px;
+      }
+
+      .place-tag {
+        font-size: 12px;
+        padding: 14px 16px;
+      }
+
+      .caption {
+        font-size: 14px;
+        padding: 12px 2px 2px;
+      }
+
+      .flake {
+        width: 90px;
+        height: 110px;
+      }
+
+      .cheeky {
+        font-size: 18px;
+      }
+
+      #music-btn {
+        width: 44px;
+        height: 44px;
+      }
+
+      #play-btn {
+        font-size: 15px;
+        padding: 13px 34px;
+      }
+
+      #start .t {
+        font-size: clamp(24px, 7vw, 36px);
+      }
+
+      #start .s {
+        font-size: 12px;
+      }
+
+      .thanks-jp {
+        font-size: clamp(28px, 9vw, 48px);
+      }
+
+      #compat {
+        width: 86vw;
+      }
     }
 
     /* タッチデバイスではカーソル非表示 */
     @media (hover: none) {
-      #stage { cursor: default; }
+      #stage {
+        cursor: default;
+      }
     }
   </style>
 </head>
@@ -320,7 +624,11 @@
     <div id="bg"></div>
 
     <button id="music-btn" onclick="toggleMusic(event)" aria-label="音楽">
-      <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
     </button>
 
     <div id="hint"></div>
@@ -344,7 +652,9 @@
       </div>
       <div id="compat">
         <div class="lbl"><span>二人の相性</span><span>測定中…</span></div>
-        <div class="track"><div class="fill"></div></div>
+        <div class="track">
+          <div class="fill"></div>
+        </div>
         <div class="pct"></div>
       </div>
       <button class="replay" onclick="restart(event)">もう一度見る</button>
@@ -358,36 +668,36 @@
 
     const trips = [
       // 1日目
-      { day:"1日目", place:"待ち合わせ",      caption:"ドトールで合流、やっと会えた",              src:"./photo/ドトール.jpg" },
-      { day:"1日目", place:"大阪・初日",      caption:"1発目から海鮮丼でテンションMAX",            src:"./photo/こたや.jpg" },
-      { day:"1日目", place:"大阪",            caption:"とりあえず食べ歩き開始",                    src:"./photo/食べ歩き.jpg" },
-      { day:"1日目", place:"大阪",            caption:"まだ食べてる",                              src:"./photo/食べ歩き2.jpg" },
-      { day:"1日目", place:"大阪・夜",        caption:"夜はサムギョプサルで食べすぎた",            src:"./photo/サムギョプサル.jpg" },
-      { day:"1日目", place:"大阪・〆",        caption:"〆の芯やが正解だった",                      src:"./photo/芯や飯.jpg" },
+      { day: "1日目", place: "大阪初日", caption: "1発目から海鮮丼でテンションMAX", src: "./photo/こたや.jpg" },
+      { day: "1日目", place: "大阪", caption: "初パチンコ、完全に沼だった", src: "./photo/パチンコ.jpg" },
+      { day: "1日目", place: "大阪・夜", caption: "夜はサムギョプサル!!", src: "./photo/サムギョプサル.jpg" },
+      { day: "1日目", place: "大阪・〆", caption: "大阪に来たらたこやき、これ義務", src: "./photo/たこやき.jpg" },
       // 2日目
-      { day:"2日目", place:"伊勢へ",          caption:"近鉄特急でいざ伊勢へ",                      src:"./photo/伊勢電車.jpg" },
-      { day:"2日目", place:"伊勢市駅",        caption:"伊勢市駅に降り立つ",                        src:"./photo/伊勢市駅.jpg" },
-      { day:"2日目", place:"おかげ横丁",      caption:"食べ歩きが止まらない",                      src:"./photo/伊勢食べ歩き3.jpg" },
-      { day:"2日目", place:"伊勢",            caption:"暑すぎてビール一択だった",                  src:"./photo/伊勢のビール.jpg" },
-      { day:"2日目", place:"伊勢",            caption:"太鼓の音で思わず立ち止まった",              src:"./photo/伊勢太鼓.jpg" },
-      { day:"2日目", place:"伊勢",            caption:"暑さが想定外すぎて笑えた",                  src:"./photo/伊勢熱い.jpg" },
-      { day:"2日目", place:"伊勢",            caption:"完全に死んだ顔（でも楽しかった）",          src:"./photo/伊勢死んだ顔.jpg" },
-      { day:"2日目", place:"帰り道",          caption:"帰りの551がご褒美すぎた",                  src:"./photo/伊勢帰り551.jpg" },
+      { day: "2日目", place: "大阪初日", caption: "2日目開始", src: "./photo/ドトール.jpg" },
+      { day: "2日目", place: "伊勢へ", caption: "近鉄特急でいざ伊勢へ", src: "./photo/伊勢電車.jpg" },
+      { day: "2日目", place: "伊勢市駅", caption: "伊勢市駅に降り立つ", src: "./photo/伊勢市駅.jpg" },
+      { day: "2日目", place: "大阪", caption: "とりあえず食べ歩き開始", src: "./photo/食べ歩き.jpg" },
+      { day: "2日目", place: "大阪", caption: "まだ食べてる", src: "./photo/食べ歩き2.jpg" },
+      { day: "2日目", place: "おかげ横丁", caption: "食べ歩きが止まらない", src: "./photo/伊勢食べ歩き3.jpg" },
+      { day: "2日目", place: "伊勢", caption: "暑すぎてビール一択だった", src: "./photo/伊勢のビール.jpg" },
+      { day: "2日目", place: "伊勢", caption: "太鼓の音で思わず立ち止まった", src: "./photo/伊勢太鼓.jpg" },
+      { day: "2日目", place: "伊勢", caption: "暑さが想定外すぎて笑えた", src: "./photo/伊勢熱い.jpg" },
+      { day: "2日目", place: "伊勢", caption: "完全に死んだ顔（でも楽しかった）", src: "./photo/伊勢死んだ顔.jpg" },
+      { day: "2日目", place: "帰り道", caption: "帰りの551がご褒美すぎた", src: "./photo/伊勢帰り551.jpg" },
       // 3日目
-      { day:"3日目", place:"甲子園",          caption:"外から見てもテンション上がる",              src:"./photo/甲子園.jpg" },
-      { day:"3日目", place:"甲子園",          caption:"いよいよ入場！！",                          src:"./photo/甲子園球場入場.jpg" },
-      { day:"3日目", place:"甲子園グルメ",    caption:"甲子園グルメも制覇していく",                src:"./photo/甲子園食べ歩き1.jpg" },
-      { day:"3日目", place:"甲子園グルメ",    caption:"食欲が止まらない",                          src:"./photo/甲子園食べ歩き2.jpg" },
-      { day:"3日目", place:"甲子園",          caption:"ミニオン爆買い、後悔はしてない",            src:"./photo/ミニオン爆買い.jpg" },
-      { day:"3日目", place:"大阪",            caption:"初パチンコ、完全に沼だった",                src:"./photo/パチンコ.jpg" },
-      { day:"3日目", place:"大阪・〆",        caption:"大阪に来たらたこやき、これ義務",            src:"./photo/たこやき.jpg" },
+      { day: "3日目", place: "甲子園", caption: "外から見てもテンション上がる", src: "./photo/甲子園.jpg" },
+      { day: "3日目", place: "甲子園", caption: "いよいよ入場！！", src: "./photo/甲子園球場入場.jpg" },
+      { day: "3日目", place: "甲子園グルメ", caption: "甲子園グルメも制覇していく", src: "./photo/甲子園食べ歩き1.jpg" },
+      { day: "3日目", place: "甲子園グルメ", caption: "食欲が止まらない", src: "./photo/甲子園食べ歩き2.jpg" },
       // 4日目
-      { day:"4日目", place:"環状線",          caption:"さあ、一周の旅スタート！",                  src:"./photo/環状線1周スタート.jpg" },
-      { day:"4日目", place:"環状線・鶴橋",    caption:"コリアンタウンの匂いがする",                src:"./photo/環状線一周_つるはし.jpg" },
-      { day:"4日目", place:"環状線・大阪城公園", caption:"窓から大阪城、テンション爆上がり",       src:"./photo/環状線一周_大阪城.jpg" },
-      { day:"4日目", place:"環状線・天王寺",  caption:"天王寺でひと息",                            src:"./photo/環状線一周_天王寺.jpg" },
-      { day:"4日目", place:"環状線・梅田",    caption:"梅田まで来た、もうすぐゴール",              src:"./photo/環状線一周梅田.jpg" },
-      { day:"4日目", place:"環状線・完",      caption:"一周完走！！謎の達成感があった",            src:"./photo/環状線一周_完.jpg" },
+      { day: "4日目", place: "環状線", caption: "さあ、環状線一周の旅スタート！", src: "./photo/環状線1周スタート.jpg" },
+      { day: "4日目", place: "環状線・梅田", caption: "梅田", src: "./photo/環状線一周梅田.jpg" },
+      { day: "4日目", place: "環状線・大阪城公園", caption: "大阪城で、テンション爆上がり", src: "./photo/環状線一周_大阪城.jpg" },
+      { day: "4日目", place: "環状線・鶴橋", caption: "コリアンタウンの匂いがする", src: "./photo/環状線一周_つるはし.jpg" },
+      { day: "4日目", place: "環状線・天王寺", caption: "天王寺でひと息", src: "./photo/環状線一周_天王寺.jpg" },
+      { day: "4日目", place: "環状線・完", caption: "一周完走！！謎の達成感があった", src: "./photo/環状線一周_完.jpg" },
+      { day: "4日目", place: "大阪・〆", caption: "深夜飯最高", src: "./photo/芯や飯.jpg" },
+      { day: "4日目", place: "甲子園", caption: "ミニオン爆買い、後悔はしてない", src: "./photo/ミニオン爆買い.jpg" },
     ];
 
     /* 相性ギャグ文言 */
@@ -395,7 +705,7 @@
 
     /* 音楽のフェードアウト（秒） */
     const MUSIC_FADE_START = 55;
-    const MUSIC_FADE_END   = 60;
+    const MUSIC_FADE_END = 60;
 
     /*
       SLIDE_TIMES[i] = スライド i → i+1 へ切り替わる時刻（秒）
@@ -444,16 +754,16 @@
     */
     const BG_PALETTE = [
       { base: '#1e0c08', glow: 'rgba(255,140,100,0.28)' },  // 1日目: サーモンピンク
-      { base: '#1c0e06', glow: 'rgba(255,130,90,0.26)'  },
-      { base: '#1a1004', glow: 'rgba(255,150,80,0.26)'  },
-      { base: '#1c1002', glow: 'rgba(255,155,70,0.28)'  },  // 2日目: アンバーへ
-      { base: '#1e0e00', glow: 'rgba(255,145,60,0.28)'  },
-      { base: '#200a00', glow: 'rgba(255,110,50,0.32)'  },  // 転換: 深みコーラル
-      { base: '#220600', glow: 'rgba(255,85,50,0.36)'   },  // 3日目: ホットコーラル
-      { base: '#240400', glow: 'rgba(255,70,50,0.38)'   },
-      { base: '#200800', glow: 'rgba(255,105,45,0.34)'  },
-      { base: '#1c1000', glow: 'rgba(255,175,50,0.40)'  },  // 4日目: ゴールド
-      { base: '#181200', glow: 'rgba(255,205,65,0.48)'  },  // フィナーレ: 明るいゴールド
+      { base: '#1c0e06', glow: 'rgba(255,130,90,0.26)' },
+      { base: '#1a1004', glow: 'rgba(255,150,80,0.26)' },
+      { base: '#1c1002', glow: 'rgba(255,155,70,0.28)' },  // 2日目: アンバーへ
+      { base: '#1e0e00', glow: 'rgba(255,145,60,0.28)' },
+      { base: '#200a00', glow: 'rgba(255,110,50,0.32)' },  // 転換: 深みコーラル
+      { base: '#220600', glow: 'rgba(255,85,50,0.36)' },  // 3日目: ホットコーラル
+      { base: '#240400', glow: 'rgba(255,70,50,0.38)' },
+      { base: '#200800', glow: 'rgba(255,105,45,0.34)' },
+      { base: '#1c1000', glow: 'rgba(255,175,50,0.40)' },  // 4日目: ゴールド
+      { base: '#181200', glow: 'rgba(255,205,65,0.48)' },  // フィナーレ: 明るいゴールド
     ];
 
     /* ===================== ここから下は仕組み部分 ===================== */
@@ -508,8 +818,16 @@
         el.classList.remove('active');
         if (k === current) {
           const dir = Math.random() < 0.5 ? -1 : 1;
-          el.style.setProperty('--enter-x', (dir * (30 + Math.random() * 40)) + 'px');
-          el.style.setProperty('--enter-rot', (dir * (2 + Math.random() * 5)) + 'deg');
+          if (window.innerWidth <= 480) {
+            // モバイル: 上か下から入る
+            el.style.setProperty('--enter-x', '0px');
+            el.style.setProperty('--enter-y', (dir * (30 + Math.random() * 40)) + 'px');
+            el.style.setProperty('--enter-rot', (dir * (1 + Math.random() * 3)) + 'deg');
+          } else {
+            el.style.setProperty('--enter-x', (dir * (30 + Math.random() * 40)) + 'px');
+            el.style.setProperty('--enter-y', '0px');
+            el.style.setProperty('--enter-rot', (dir * (2 + Math.random() * 5)) + 'deg');
+          }
           el.classList.add('active');
         }
       });
@@ -534,15 +852,18 @@
 
       if (bgm.paused || !started) return;
 
-      // スライド自動送り
-      if (current < SLIDE_TIMES.length && t >= SLIDE_TIMES[current]) {
-        const nextIdx = current + 1;
-        showPhoto(nextIdx);
-        if (nextIdx < trips.length) {
-          // サビ区間は多め、それ以外でも必ず1枚は同日写真を飛ばす
-          const big = SCATTER_AT.has(nextIdx);
-          spawnFlake(big ? 2 + (Math.random() < 0.5 ? 1 : 0) : 1, nextIdx);
-        }
+      // スライド自動送り：音楽時刻から目標スライドを毎回計算
+      // → 手動スキップ後も必ず曲の最後まで自動で送り続ける
+      let targetIdx = 0;
+      for (let i = 0; i < SLIDE_TIMES.length; i++) {
+        if (t >= SLIDE_TIMES[i]) targetIdx = i + 1;
+        else break;
+      }
+      targetIdx = Math.min(targetIdx, trips.length - 1);
+      if (targetIdx > current) {
+        const big = SCATTER_AT.has(targetIdx);
+        spawnFlake(big ? 2 + (Math.random() < 0.5 ? 1 : 0) : 1, targetIdx);
+        showPhoto(targetIdx);
       }
     }
 
@@ -550,17 +871,26 @@
     function spawnFlake(n, fromIdx) {
       const day = (fromIdx != null && trips[fromIdx]) ? trips[fromIdx].day : null;
       const pool = (day && dayPhotos[day]) ? dayPhotos[day] : trips.map((_, i) => i);
+      const isMobile = window.innerWidth <= 480;
       for (let k = 0; k < n; k++) {
         const t = trips[pool[Math.floor(Math.random() * pool.length)]];
         const f = document.createElement('div');
         f.className = 'flake';
         f.style.cssText = bgOf(t);
-        const side = Math.random() < 0.5 ? -1 : 1;
         f.style.left = (15 + Math.random() * 70) + '%';
-        f.style.top  = (12 + Math.random() * 60) + '%';
-        f.style.setProperty('--fx', (side * (180 + Math.random() * 260)) + 'px');
-        f.style.setProperty('--fy', ((Math.random() - 0.5) * 300) + 'px');
-        f.style.setProperty('--fr', (side * (20 + Math.random() * 40)) + 'deg');
+        f.style.top = (20 + Math.random() * 50) + '%';
+        if (isMobile) {
+          // モバイル: 上か下から飛び込む（横方向は画面内に収まる小さめのズレ）
+          const side = Math.random() < 0.5 ? -1 : 1;
+          f.style.setProperty('--fx', ((Math.random() - 0.5) * 80) + 'px');
+          f.style.setProperty('--fy', (side * (180 + Math.random() * 200)) + 'px');
+          f.style.setProperty('--fr', ((Math.random() - 0.5) * 30) + 'deg');
+        } else {
+          const side = Math.random() < 0.5 ? -1 : 1;
+          f.style.setProperty('--fx', (side * (180 + Math.random() * 260)) + 'px');
+          f.style.setProperty('--fy', ((Math.random() - 0.5) * 300) + 'px');
+          f.style.setProperty('--fr', (side * (20 + Math.random() * 40)) + 'deg');
+        }
         scatterEl.appendChild(f);
         setTimeout(() => f.remove(), 950);
       }
@@ -588,13 +918,13 @@
       if (tapTimes.length >= 4) { heartBurst(); tapTimes = []; }
     }
     function heartBurst() {
-      const emojis = ['💕','💖','❤️','💗','✨','💘'];
+      const emojis = ['💕', '💖', '❤️', '💗', '✨', '💘'];
       for (let i = 0; i < 16; i++) {
         const h = document.createElement('div');
         h.className = 'heart';
         h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
         h.style.left = (30 + Math.random() * 40) + '%';
-        h.style.top  = (45 + Math.random() * 25) + '%';
+        h.style.top = (45 + Math.random() * 25) + '%';
         h.style.setProperty('--hx', ((Math.random() - 0.5) * 260) + 'px');
         h.style.setProperty('--hrot', ((Math.random() - 0.5) * 90) + 'deg');
         h.style.animationDelay = (Math.random() * 0.15) + 's';
@@ -646,11 +976,12 @@
     function toggleMusic(e) {
       e.stopPropagation();
       if (!started) { startShow(e); return; }
-      if (bgm.paused) { bgm.play().then(() => setMusicUI(true)).catch(() => {}); }
+      if (bgm.paused) { bgm.play().then(() => setMusicUI(true)).catch(() => { }); }
       else { bgm.pause(); setMusicUI(false); }
     }
 
     stage.addEventListener('click', () => {
+      if (wasHolding) { wasHolding = false; return; } // 長押し解放後のクリックは無視
       if (!started) { startShow(); return; }
       manualNext();
     });
@@ -672,25 +1003,57 @@
       else manualPrev();
     }, { passive: false });
 
-    // スワイプ（横：左=次/右=前、縦：上=次/下=前）
+    // スワイプ（横：左=次/右=前、縦：上=次/下=前）＋長押しで一時停止
     let touchStartX = 0, touchStartY = 0;
+    let holding = false, holdTimer = null, wasHolding = false;
+
     stage.addEventListener('touchstart', e => {
+      if (e.target.closest('#music-btn')) return;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      // 500ms 長押しで一時停止
+      holdTimer = setTimeout(() => {
+        holding = true;
+        wasHolding = true;
+        bgm.pause();
+        setMusicUI(false);
+        if (navigator.vibrate) navigator.vibrate(30); // 触覚フィードバック
+      }, 500);
     }, { passive: true });
+
     stage.addEventListener('touchend', e => {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      if (holding) {
+        // 長押し解放 → 再開
+        holding = false;
+        if (started && !finaleEl.classList.contains('show')) {
+          bgm.play().then(() => setMusicUI(true)).catch(() => { });
+        }
+        return; // スワイプ・タップ処理はしない
+      }
       const dx = e.changedTouches[0].clientX - touchStartX;
       const dy = e.changedTouches[0].clientY - touchStartY;
       const adx = Math.abs(dx), ady = Math.abs(dy);
-      if (adx < 30 && ady < 30) return; // タップは無視（click に任せる）
+      if (adx < 30 && ady < 30) return; // タップは click に任せる
+      e.preventDefault(); // スワイプ後に click イベントが二重発火するのを防ぐ
       if (adx >= ady) {
-        // 横スワイプ
         if (dx < 0) { if (!started) startShow(); else manualNext(); }
         else manualPrev();
       } else {
-        // 縦スワイプ
-        if (dy < 0) { if (!started) startShow(); else manualNext(); } // 上=次
-        else manualPrev(); // 下=前
+        if (dy < 0) { if (!started) startShow(); else manualNext(); }
+        else manualPrev();
+      }
+    });
+
+    stage.addEventListener('touchcancel', () => {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      if (holding) {
+        holding = false;
+        if (started && !finaleEl.classList.contains('show')) {
+          bgm.play().then(() => setMusicUI(true)).catch(() => { });
+        }
       }
     });
 
@@ -723,7 +1086,7 @@
       lastManualTime = 0;
       updateBg(0);
       showPhoto(0);
-      bgm.play().then(() => setMusicUI(true)).catch(() => {});
+      bgm.play().then(() => setMusicUI(true)).catch(() => { });
       raf = requestAnimationFrame(loop);
     }
   </script>
